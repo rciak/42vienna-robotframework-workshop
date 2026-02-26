@@ -301,7 +301,7 @@ Note: `uv.lock` is NOT in .gitignore — it must be committed for reproducible i
 ### CURRENT ISSUES — Phase 1
 
 - [x] **DECIDED:** Repo created via `gh repo create` CLI (public, with description).
-- [ ] **DECIDE:** Should GitLab project be manually created or left for auto-sync?
+- [x] **DECIDED:** Left for auto-sync. `github-sync` CronJob auto-discovers all HackXIt repos and mirrors to `github-mirrors` group.
 - [x] **RESOLVED:** GitHub auth required `workflow` scope for pushing workflow files. Added via `gh auth refresh -s workflow`.
 
 ---
@@ -392,10 +392,10 @@ Must verify:
 
 ### CURRENT ISSUES — Phase 2
 
-- [ ] **VERIFY:** Does the `ghcr.io/va-h/devcontainers-features/uv:1` feature work reliably in Codespaces? If not, fall back to curl-based install in post-create.sh.
+- [ ] **VERIFY:** Does the `ghcr.io/va-h/devcontainers-features/uv:1` feature work reliably in Codespaces? Fallback already in post-create.sh.
 - [ ] **VERIFY:** Does `rfbrowser init chromium` complete within the Codespace timeout?
-- [ ] **VERIFY:** Are there Playwright system dependencies missing in the bookworm base image? May need `npx playwright install-deps` or `apt-get install` for missing libs.
-- [ ] **KNOWN ISSUE:** First Codespace build downloads ~250MB of Chromium binaries. On slow connections this can take several minutes. Consider: Codespace prebuild configuration to cache this.
+- [x] **MITIGATED:** Playwright system deps — added `npx playwright install-deps chromium` to post-create.sh.
+- [ ] **KNOWN ISSUE:** First Codespace build downloads ~250MB of Chromium binaries. Consider Codespace prebuild for caching.
 
 ---
 
@@ -519,7 +519,7 @@ Then look for a `chromium-*` directory inside the found path.
 
 ### CURRENT ISSUES — Phase 3
 
-- [ ] **DECIDE:** Should the script also check for `robocop` (linter) or only core runtime?
+- [x] **DECIDED:** Core runtime only. Robocop is a dev tool, not required for workshop tests to run.
 - [ ] **VERIFY:** Playwright browsers path detection works correctly in Codespaces (may use a non-standard path).
 - [ ] **VERIFY:** ANSI color codes render correctly in Codespaces terminal and Windows Terminal.
 
@@ -633,9 +633,9 @@ Example Test Case
 
 ### CURRENT ISSUES — Phase 4
 
-- [ ] **VERIFY:** SauceDemo CSS selectors are current (they occasionally change their markup).
+- [x] **VERIFIED:** SauceDemo CSS selectors are current — all 25 tests pass locally and in CI (March 2026).
 - [ ] **VERIFY:** Browser Library's `New Browser` keyword works headless in Codespaces (no display server).
-- [ ] **DECIDE:** Should example tests use `browser=chromium` explicitly or rely on default?
+- [x] **DECIDED:** Rely on default. `common.resource` uses `chromium` in `New Browser`, which is sufficient.
 - [ ] **KNOWN RISK:** SauceDemo could go down during the workshop. Prepare a fallback SUT (automationexercise.com, the-internet.herokuapp.com).
 
 ---
@@ -721,9 +721,9 @@ Deploy `results/` to GitHub Pages on main branch pushes:
 
 ### CURRENT ISSUES — Phase 5
 
-- [ ] **VERIFY:** `astral-sh/setup-uv@v7` is the latest stable version of the action.
-- [ ] **DECIDE:** Should CI run ALL tests or only student exercise tests? Running all on every PR may be noisy.
-- [ ] **DECIDE:** Should failed tests block PR merge or just report? For a workshop, reporting only is more friendly.
+- [x] **VERIFIED:** `astral-sh/setup-uv@v7` is latest major (v7.3.1 latest release, Feb 2026). No changes needed.
+- [x] **DECIDED:** CI runs ALL tests on every PR. This validates students don't break existing tests. 27 tests run in ~1 min.
+- [x] **DECIDED:** Failed tests do not block merge (no branch protection rules). CI reports status but workshop is learning-focused.
 - [ ] **VERIFY:** GitHub Actions free tier limits (2000 min/month for free accounts, 3000 min/month for Pro). Each run with Playwright install may take ~3-5 min.
 
 ---
@@ -790,9 +790,9 @@ This demonstrates the "AI-assisted test automation" angle.
 
 ### CURRENT ISSUES — Phase 6
 
-- [ ] **VERIFY:** `robotframework-mcp` package exists on PyPI and is compatible with current RF/Browser versions.
-- [ ] **DECIDE:** Should Claude Code / AI be pre-configured in the DevContainer, or shown as a demo only?
-- [ ] **DECIDE:** Should the repo have GitHub Copilot or Claude Code review PRs automatically via GitHub Actions?
+- [x] **VERIFIED:** `robotframework-mcp` exists but is SeleniumLibrary-based (not suitable). Using `rf-mcp` (0.30+, 71+ releases, mature). Added to dev deps.
+- [x] **DECIDED:** AI demo only (instructor shows Claude Code). Not pre-configured for students — adds complexity. `.claude/settings.json` exists for instructor use.
+- [x] **DECIDED:** No automatic AI PR review. Workshop is about learning, not automated gatekeeping. Instructor reviews manually.
 
 ---
 
@@ -909,8 +909,8 @@ Guide for the AI demo portion:
 
 ### CURRENT ISSUES — Phase 7
 
-- [ ] **DECIDE:** Should docs include screenshots? If yes, they need to be captured during Phase 11 pre-check.
-- [ ] **DECIDE:** How much RF theory vs hands-on in the cheatsheet? Students learn C-style, so comparison tables (C if/else → RF IF/ELSE) might be helpful.
+- [x] **DECIDED:** Screenshots are nice-to-have. Text instructions are sufficient; screenshots can be added during Phase 11 pre-check if time permits.
+- [x] **DECIDED:** C comparison tables already included in `docs/02-rf-syntax-cheatsheet.md`. Balance is good: minimal theory, heavy on examples.
 - [ ] **VERIFY:** Windows setup doc should be tested on an actual Windows machine or VM.
 
 ---
@@ -1250,8 +1250,8 @@ Phase 1 (Repo + pyproject.toml)
 - [x] Create `.claude/settings.json` with MCP server config
 - [x] Verify MCP package on PyPI — `robotframework-mcp` (SeleniumLibrary-based, not suitable); using `rf-mcp` (0.30+, mature)
 - [x] Add `rf-mcp` to `pyproject.toml` dev dependencies
-- [ ] Prepare AI demo script (natural language → RF test → run → refine)
-- [ ] Test the demo end-to-end
+- [x] Prepare AI demo script — `docs/ai-demo-script.md` with flow, prompts, backup test
+- [ ] Test the demo end-to-end (requires live Claude Code session)
 
 ### Phase 7: Documentation (Day 4-5)
 - [x] Create `README.md` (quick start, prerequisites, agenda, badges)
