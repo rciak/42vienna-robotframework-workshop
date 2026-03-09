@@ -53,15 +53,10 @@ nav:
     - Troubleshooting: troubleshooting.md
   - Workshop:
     - Exercises: exercises.md
+    - Optional Practice Sites: optional-practice-sites.md
     - AI-Assisted Testing: ai-assisted-testing.md
     - Workshop Agenda: workshop-agenda.md
     - AI Demo Script: ai-demo-script.md
-  - Keywords:
-    - Overview: keywords/index.md
-    - Common: keywords/common.md
-    - Login Page: keywords/login_page.md
-    - Products Page: keywords/products_page.md
-    - Cart Page: keywords/cart_page.md
-    - Checkout Page: keywords/checkout_page.md
+  - Keywords: keywords/index.md
 
 docs_dir: docs

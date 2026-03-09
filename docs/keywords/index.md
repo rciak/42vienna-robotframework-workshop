@@ -1,17 +1,17 @@
 # Keyword Documentation
 
-This section contains auto-generated documentation for all resource files in this workshop.
-The documentation is generated using Robot Framework's `libdoc` tool.
+Auto-generated documentation for all resource files, produced by Robot Framework's
+[libdoc](https://robotframework.org/robotframework/latest/RobotFrameworkUserGuide.html#libdoc) tool.
 
 ## Resource Files
 
 | Resource | Description |
 |----------|-------------|
-| [Common](common.md) | Shared setup/teardown and variables |
-| [Login Page](login_page.md) | Login page keywords |
-| [Products Page](products_page.md) | Products/inventory page keywords |
-| [Cart Page](cart_page.md) | Shopping cart keywords |
-| [Checkout Page](checkout_page.md) | Checkout flow keywords |
+| [Common](common.html) | Shared setup/teardown and variables |
+| [Login Page](login_page.html) | Login page keywords |
+| [Products Page](products_page.html) | Products/inventory page keywords |
+| [Cart Page](cart_page.html) | Shopping cart keywords |
+| [Checkout Page](checkout_page.html) | Checkout flow keywords |
 
 ## How Keywords Work
 

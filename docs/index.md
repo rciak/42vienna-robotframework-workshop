@@ -2,7 +2,7 @@
 
 [![Robot Framework Tests](https://github.com/HackXIt/42vienna-robotframework-workshop/actions/workflows/robot-tests.yml/badge.svg)](https://github.com/HackXIt/42vienna-robotframework-workshop/actions/workflows/robot-tests.yml)
 
-**Part 2: Browser Library & Playwright for Web Testing**
+**Browser Library & Playwright for Web Testing**
 
 Workshop Date: March 16, 2026, 16:00 — 42 Vienna, Muthgasse 24-26, 1190 Vienna
 
@@ -35,16 +35,12 @@ This workshop focuses on **web testing** using Browser Library against [SauceDem
 
 ## Workshop Agenda
 
-| Time  | Activity |
-|-------|----------|
-| 16:00 | Welcome, intro, environment setup |
-| 16:30 | RF syntax walkthrough + Browser Library basics |
-| 17:05 | Break |
-| 17:15 | Guided exercises: Login & Product tests |
-| 18:15 | Break |
-| 18:25 | Resource files, keyword abstraction, free exercises |
-| 19:15 | AI-assisted testing demo |
-| 19:30 | PR creation, CI results, wrap-up |
+1. Welcome, intro, environment setup
+2. RF syntax walkthrough + Browser Library basics
+3. Guided exercises: Login & Product tests
+4. Resource files, keyword abstraction, free exercises
+5. AI-assisted testing demo
+6. PR creation, CI results, wrap-up
 
 ## Documentation
 
@@ -52,11 +48,12 @@ This workshop focuses on **web testing** using Browser Library against [SauceDem
 - [RF Syntax Cheatsheet](rf-syntax-cheatsheet.md) — quick reference
 - [Browser Library Guide](browser-library-guide.md) — Browser Library keywords
 - [Exercises](exercises.md) — progressive hands-on exercises
+- [Optional Practice Sites](optional-practice-sites.md) — additional sites beyond SauceDemo
 - [Troubleshooting](troubleshooting.md) — common issues and fixes
 - [AI-Assisted Testing](ai-assisted-testing.md) — using AI for test generation
 - [Student Workflow](student-workflow.md) — fork, write tests, submit PR
 - [Windows Setup](windows-setup.md) — detailed Windows instructions
-- [Keyword Documentation](keywords/index.md) — auto-generated keyword reference
+- [Keyword Documentation](keywords/index.md) — auto-generated keyword reference (libdoc HTML)
 
 ## Common Commands
 

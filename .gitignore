@@ -25,6 +25,9 @@ playwright-log.txt
 # MkDocs
 site/
 
+# Generated libdoc HTML (built during docs deployment)
+docs/keywords/*.html
+
 # Robocop
 robocop.json
 .robocop_cache/

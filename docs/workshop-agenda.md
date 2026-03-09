@@ -4,23 +4,23 @@
 **Duration:** ~4 hours
 **Location:** 42 Vienna, Muthgasse 24-26, 1190 Vienna
 
-## Timeline
+## Agenda
 
-| Time | Duration | Activity | Details |
-|------|----------|----------|---------|
-| 16:00 | 15 min | Welcome & Setup | Intro, fork repo, open Codespace, run `check_environment.py` |
-| 16:15 | 15 min | Robot Framework Overview | What is RF, why generic > specialized, comparison with Cypress/Postman |
-| 16:30 | 20 min | RF Syntax Walkthrough | Live coding with cheat sheet, variables, keywords, sections |
-| 16:50 | 15 min | Browser Library Demo | Run `first_browser_test.robot`, explain selectors, auto-wait |
-| 17:05 | 10 min | **Break** | |
-| 17:15 | 30 min | Exercise: Login Tests (Ex 2-3) | Students write tests, instructor walks around |
-| 17:45 | 30 min | Exercise: Products & Cart (Ex 4) | More independence, less guidance |
-| 18:15 | 10 min | **Break** | |
-| 18:25 | 20 min | Resource Files & Keyword Abstraction | Show page object pattern, import chain |
-| 18:45 | 30 min | Free Exercise: E2E Scenario (Ex 5-6) | Independent or pair work |
-| 19:15 | 15 min | AI-Assisted Testing Demo | Claude Code generates test from natural language |
-| 19:30 | 15 min | PR Submission & CI Results | Students create PRs, review CI feedback |
-| 19:45 | 15 min | Wrap-up & Q&A | RF ecosystem, next steps, feedback |
+| Activity | Details |
+|----------|---------|
+| Welcome & Setup | Intro, fork repo, open Codespace, run `check_environment.py` |
+| Robot Framework Overview | What is RF, why generic > specialized, comparison with Cypress/Postman |
+| RF Syntax Walkthrough | Live coding with cheat sheet, variables, keywords, sections |
+| Browser Library Demo | Run `first_browser_test.robot`, explain selectors, auto-wait |
+| **Break** | |
+| Exercise: Login Tests (Ex 2-3) | Students write tests, instructor walks around |
+| Exercise: Products & Cart (Ex 4) | More independence, less guidance |
+| **Break** | |
+| Resource Files & Keyword Abstraction | Show page object pattern, import chain |
+| Free Exercise: E2E Scenario (Ex 5-6) | Independent or pair work |
+| AI-Assisted Testing Demo | Claude Code generates test from natural language |
+| PR Submission & CI Results | Students create PRs, review CI feedback |
+| Wrap-up & Q&A | RF ecosystem, next steps, feedback |
 
 ## Key Talking Points
 

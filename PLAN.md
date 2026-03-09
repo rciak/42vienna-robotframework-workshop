@@ -34,7 +34,7 @@
 
 ## Executive Summary
 
-This plan covers setting up a Robot Framework workshop repository from an empty git repo to a fully functional, student-ready environment in 7 days. The workshop is Part 2 (advanced) of a lecture series at 42 Vienna, targeting students who know C but not Python, can use Git CLI basics, and are unfamiliar with DevContainers or forks.
+This plan covers setting up a Robot Framework workshop repository from an empty git repo to a fully functional, student-ready environment in 7 days. The workshop is an advanced, hands-on session at 42 Vienna, targeting students who know C but not Python, can use Git CLI basics, and are unfamiliar with DevContainers or forks.
 
 The workshop is highly hands-on with minimal lecturing. Students will write Robot Framework test cases using Browser Library (Playwright-based) against SauceDemo, commit via PRs, and observe CI results. AI-assisted test generation will be demonstrated. Robot Framework is highlighted as a generic test automation framework — one interface/syntax across different testing domains (web, API, mobile, desktop), unlike specialized tools that each require learning a new ecosystem.
 
@@ -64,7 +64,7 @@ Based on emails with Hans Jörg Otto and Simon Dablander:
 - **IDE:** Generally know VSCode. NOT familiar with Codespaces or DevContainers.
 - **Programming:** Know C (control flow, variables, types). Do NOT know Python.
 - **Docker:** NOT a prerequisite. Some may have heard of it but most haven't used it.
-- **Testing:** Have had ISTQB Foundation Level training available. This is Part 2 — they've seen a Part 1 lecture on testing.
+- **Testing:** Have had ISTQB Foundation Level training available from a previous session.
 - **Hardware:** Either own laptops or 42 Vienna machines (need VSCode + Docker if running locally).
 
 ---
@@ -123,7 +123,7 @@ Students → GitHub (PRs, branches) → GitHub Actions (CI)
 
 - Repository: `HackXIt/42vienna-robotframework-workshop`
 - Visibility: **Public** (students need access without auth)
-- Description: "Robot Framework E2E testing workshop for 42 Vienna — Part 2: Browser Library & Playwright"
+- Description: "Robot Framework E2E testing workshop for 42 Vienna — Browser Library & Playwright"
 - License: MIT
 - Initialize with README: Yes
 - `.gitignore`: Python template
@@ -712,18 +712,33 @@ Key design:
 - Links to the full report artifact
 - Could use a custom `scripts/parse_results.py` or `rebot` for summary generation
 
-### Step 5.3: GitHub Pages for Test Reports (Nice-to-have)
+### Step 5.3: Robocop Lint Job
 
-Deploy `results/` to GitHub Pages on main branch pushes:
-- Students can view latest reports at `https://hackxit.github.io/42vienna-robotframework-workshop/`
-- Useful for post-workshop reference
-- Requires enabling GitHub Pages in repo settings
+Added a separate `lint` job to `robot-tests.yml`:
+- Runs `robocop check --reports sarif --exit-zero tests/ resources/` using the "minimal" ruleset from `pyproject.toml`
+- Uploads `.sarif.json` to GitHub Code Scanning via `github/codeql-action/upload-sarif@v4`
+- Issues appear in the **Security → Code scanning** tab with file/line annotations
+- `--exit-zero` ensures lint findings don't fail the build
+
+PR feedback workflow (`pr-feedback.yml`) also includes Robocop:
+- Uses `--reports sarif,text_file` for both SARIF upload and human-readable PR comment
+- PR comment shows test results + Robocop issue count + link to Code Scanning tab
+
+### Step 5.4: GitHub Pages for Documentation
+
+MkDocs Material site deployed via GitHub Pages:
+- URL: `https://hackxit.github.io/42vienna-robotframework-workshop/`
+- Workflow: `.github/workflows/docs.yml` — triggers on changes to `docs/`, `mkdocs.yml`, `resources/*.resource`, or `scripts/generate_keyword_docs.py`
+- Build steps: generate keyword docs from libdoc → build MkDocs → deploy via `actions/deploy-pages@v4`
+- Enabled via `gh api` with `build_type=workflow`
 
 ### CURRENT ISSUES — Phase 5
 
 - [x] **VERIFIED:** `astral-sh/setup-uv@v7` is latest major (v7.3.1 latest release, Feb 2026). No changes needed.
 - [x] **DECIDED:** CI runs ALL tests on every PR. This validates students don't break existing tests. 27 tests run in ~1 min.
 - [x] **DECIDED:** Failed tests do not block merge (no branch protection rules). CI reports status but workshop is learning-focused.
+- [x] **VERIFIED:** Robocop SARIF → GitHub Code Scanning integration works. Both `robot-tests.yml` (lint job) and `pr-feedback.yml` upload SARIF successfully.
+- [x] **DONE:** GitHub Pages deployed with MkDocs Material. Docs workflow runs on push to main.
 - [ ] **VERIFY:** GitHub Actions free tier limits (2000 min/month for free accounts, 3000 min/month for Pro). Each run with Playwright install may take ~3-5 min.
 
 ---
@@ -907,10 +922,39 @@ Guide for the AI demo portion:
 - EACCES during npm operations — WSL filesystem permissions
 - Browser not launching headed — Needs X server (VcXsrv) in WSL, not worth complexity for workshop
 
+### Step 7.9: MkDocs GitHub Pages Site
+
+All documentation is now hosted via MkDocs Material at `https://hackxit.github.io/42vienna-robotframework-workshop/`.
+
+- `mkdocs.yml` — Site configuration with Material theme, dark/light toggle, navigation structure
+- `.github/workflows/docs.yml` — Deployment workflow (triggers on docs/mkdocs.yml/resource file changes)
+- Doc filenames renamed from numbered (`01-getting-started.md`) to clean (`getting-started.md`) for MkDocs nav compatibility
+- Added `docs` dependency group to `pyproject.toml`: `mkdocs>=1.6,<2.0`, `mkdocs-material>=9.0`
+
+### Step 7.10: Keyword Library Documentation (libdoc)
+
+Auto-generated keyword documentation from resource files using Robot Framework's `libdoc`:
+
+- `scripts/generate_keyword_docs.py` — Runs libdoc JSON → Markdown conversion for all 5 resource files
+- Generates `docs/keywords/*.md` (index, common, login_page, products_page, cart_page, checkout_page)
+- Integrated into docs deployment workflow: runs before `mkdocs build`
+- Keywords section in MkDocs nav links to all generated keyword docs
+
+### Step 7.11: Robocop Ruleset Configuration
+
+Added "minimal" ruleset v0.1.0 to `pyproject.toml` under `[tool.robocop.lint]`:
+
+- **Guiding principles:** runtime-breaking = Error, deprecation with removal plan = Warning, deprecation without removal = Informational, opinionated/style = Disabled
+- `select` / `ignore` / `configure` arrays defining ~50 selected rules, ~35 ignored rules, and severity overrides
+- Used by all CI jobs (robot-tests lint job + pr-feedback workflow)
+
 ### CURRENT ISSUES — Phase 7
 
 - [x] **DECIDED:** Screenshots are nice-to-have. Text instructions are sufficient; screenshots can be added during Phase 11 pre-check if time permits.
-- [x] **DECIDED:** C comparison tables already included in `docs/02-rf-syntax-cheatsheet.md`. Balance is good: minimal theory, heavy on examples.
+- [x] **DECIDED:** C comparison tables already included in `docs/rf-syntax-cheatsheet.md`. Balance is good: minimal theory, heavy on examples.
+- [x] **DONE:** MkDocs Material deployed to GitHub Pages with keyword docs, all documentation sections.
+- [x] **DONE:** Libdoc-generated keyword documentation integrated into MkDocs build pipeline.
+- [x] **DONE:** Robocop "minimal" ruleset v0.1.0 configured in pyproject.toml.
 - [ ] **VERIFY:** Windows setup doc should be tested on an actual Windows machine or VM.
 
 ---
@@ -1242,7 +1286,10 @@ Phase 1 (Repo + pyproject.toml)
 - [x] Test CI runs on PR — PR #1 verified, 27/27 pass (25 base + 2 student tests)
 - [x] Verify test results artifact is uploaded — confirmed in CI run
 - [x] Verify PR comment with results summary — pull_request_target posts comment with pass/fail + output
-- [ ] (Nice-to-have) Configure GitHub Pages for test reports
+- [x] Add Robocop lint job with SARIF → GitHub Code Scanning integration
+- [x] Add Robocop to PR feedback workflow (SARIF + text summary in comment)
+- [x] Configure GitHub Pages — MkDocs documentation site deployed
+- [x] Create `.github/workflows/docs.yml` for GitHub Pages deployment
 
 ### Phase 6: AI Integration (Day 3-4)
 - [x] Create `CLAUDE.md` with RF conventions, SauceDemo selectors, uv commands
@@ -1255,15 +1302,24 @@ Phase 1 (Repo + pyproject.toml)
 
 ### Phase 7: Documentation (Day 4-5)
 - [x] Create `README.md` (quick start, prerequisites, agenda, badges)
-- [x] Create `docs/01-getting-started.md` (3 setup paths)
-- [x] Create `docs/02-rf-syntax-cheatsheet.md`
-- [x] Create `docs/03-browser-library-guide.md`
-- [x] Create `docs/04-exercises.md` (8 progressive exercises)
-- [x] Create `docs/05-troubleshooting.md`
-- [x] Create `docs/06-ai-assisted-testing.md`
+- [x] Create `docs/getting-started.md` (3 setup paths)
+- [x] Create `docs/rf-syntax-cheatsheet.md`
+- [x] Create `docs/browser-library-guide.md`
+- [x] Create `docs/exercises.md` (8 progressive exercises)
+- [x] Create `docs/troubleshooting.md`
+- [x] Create `docs/ai-assisted-testing.md`
 - [x] Create `docs/windows-setup.md` (decision tree, 3 paths, common issues)
+- [x] Create `docs/student-workflow.md` (fork/collaborator workflow)
+- [x] Create `docs/workshop-agenda.md` (instructor timeline, talking points)
+- [x] Create `docs/ai-demo-script.md` (15-min demo flow)
 - [x] All docs reference `uv` commands (not pip)
 - [x] All docs end with readiness script verification step — added to exercises, windows-setup
+- [x] Rename numbered docs to clean filenames for MkDocs compatibility
+- [x] Set up MkDocs Material with `mkdocs.yml` and deploy to GitHub Pages
+- [x] Create `scripts/generate_keyword_docs.py` for libdoc → Markdown conversion
+- [x] Generate `docs/keywords/*.md` keyword reference from resource files
+- [x] Create `.github/workflows/docs.yml` for automated deployment
+- [x] Add Robocop "minimal" ruleset v0.1.0 to `pyproject.toml`
 - [ ] Proofread all docs for accuracy and clarity
 - [ ] (Nice-to-have) Add screenshots to docs
 
@@ -1342,6 +1398,9 @@ Phase 1 (Repo + pyproject.toml)
 | `astral-sh/setup-uv` version | RESOLVED | `@v7` is latest major (v7.3.1 latest release as of 2026-02-27). No changes needed. |
 | GitHub auth `workflow` scope | RESOLVED | Pushing workflow files requires the `workflow` OAuth scope. Fixed via `gh auth refresh -h github.com -s workflow`. |
 | CI first run validation | RESOLVED | CI runs on push to main. Initial failure (strict mode violation in Cart Should Contain with multiple items) fixed. All 25 tests pass. |
+| Robocop SARIF integration | RESOLVED | `robocop check --reports sarif --exit-zero` generates `.sarif.json`. Uploaded via `github/codeql-action/upload-sarif@v4`. Hidden file requires `include-hidden-files: true` on artifact upload. |
+| CodeQL Action version | RESOLVED | Upgraded from `@v3` to `@v4` (v3 deprecated Dec 2026). |
+| GitHub Pages deployment | RESOLVED | Enabled via `gh api` with `build_type=workflow`. MkDocs Material site live at `hackxit.github.io/42vienna-robotframework-workshop/`. |
 
 ### PHASE 9 — Student Workflow
 
@@ -1358,18 +1417,22 @@ Phase 1 (Repo + pyproject.toml)
 
 | File | Why Critical |
 |------|-------------|
-| `pyproject.toml` | Single source of truth: dependencies, RF config, uv config. Every other file depends on this. |
+| `pyproject.toml` | Single source of truth: dependencies, RF config, uv config, Robocop ruleset. Every other file depends on this. |
 | `scripts/check_environment.py` | 11-check readiness script. First thing students run. Validates the entire toolchain. |
 | `.devcontainer/devcontainer.json` | Determines if students can participate without local setup. Most important file for frictionless onboarding. |
 | `.devcontainer/post-create.sh` | uv sync → rfbrowser init → check script. The 4-step sequence that makes a Codespace functional. |
-| `.github/workflows/robot-tests.yml` | CI pipeline. The student feedback loop depends on this. |
+| `.github/workflows/robot-tests.yml` | CI pipeline: test runner + Robocop lint with SARIF → Code Scanning. |
+| `.github/workflows/pr-feedback.yml` | PR feedback: test results + Robocop summary posted as PR comment. |
+| `.github/workflows/docs.yml` | MkDocs + libdoc → GitHub Pages deployment. |
+| `mkdocs.yml` | MkDocs Material site configuration. |
+| `scripts/generate_keyword_docs.py` | Libdoc JSON → Markdown conversion for keyword reference docs. |
 | `resources/common.resource` | Shared RF keywords. All test suites depend on this. Sets the pattern for keyword abstraction. |
 | `CLAUDE.md` | AI agent instructions. Enables Claude/Codex to review PRs and assist students. |
-| `docs/04-exercises.md` | Drives the entire hands-on portion (~2.5 hours) of the workshop. |
-| `docs/07-student-workflow.md` | Fork → Codespace → write tests → PR → CI flow guide for students. |
+| `docs/exercises.md` | Drives the entire hands-on portion (~2.5 hours) of the workshop. |
+| `docs/student-workflow.md` | Fork → Codespace → write tests → PR → CI flow guide for students. |
 | `docs/workshop-agenda.md` | Instructor notes, timeline, talking points, fallback plan. |
 
 ---
 
 *Plan created: March 9, 2026*
-*Last updated: March 9, 2026 — Phases 1-10 implementation complete, CI + PR feedback verified (27/27 pass on PR #1)*
+*Last updated: March 9, 2026 — Phases 1-10 complete. Added MkDocs GitHub Pages, libdoc keyword docs, Robocop SARIF/Code Scanning CI integration. All CI jobs green.*
